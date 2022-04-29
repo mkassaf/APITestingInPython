@@ -44,13 +44,13 @@ pipenv install
 ```zsh
 
  # Run tests via pytest (single threaded)
-python -m pytest
+python -m pytest -s tests_api.py
 
 # Run tests in parallel
-python -m pytest -n auto
+python -m pytest -n auto tests_api.py 
 
 # Report results to report portal
-python -m pytest -n auto ./tests --reportportal
+python -m pytest -n auto tests_api.py --reportportal 
 
 ```
 
