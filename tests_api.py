@@ -14,7 +14,7 @@ def test_Add_new_Data():
 
     response = requests.request("GET", url, headers=headers, data=payload)
 
-    print(response.text)
+    print(response.elapsed.total_seconds()) ##Response Time
 
     assert_that(response.status_code).is_equal_to(200)
 
@@ -68,8 +68,37 @@ def test_create_new_log():
 
     assert_that(response.status_code).is_equal_to(404)
 
+def test_delete_log():
+    url = "https://skillsmatch.mdx.ac.uk/api/log/"
 
-def test_googleHomePage():
+    payload = json.dumps({
+        "message": "Hellow",
+        "type": "testing",
+        "created_by": 1
+    })
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", url, headers=headers, data=payload)
+    id = jsonpath.jsonpath(response.json(), "id")
+
+    url += str(id[0])
+    
+    response_from_get = requests.request("GET", url)
+
+    assert_that(response_from_get.status_code).is_equal_to(200)
+
+    response = requests.request("DELETE", url)
+
+    assert_that(response.status_code).is_equal_to(204)
+
+    response = requests.request("GET", url)
+
+    assert_that(response.status_code).is_equal_to(404)
+
+
+def test_skillsmatch_login():
     url = "https://skillsmatch.mdx.ac.uk/accounts/login/"
 
     response = requests.request("GET", url)
@@ -90,3 +119,16 @@ def test_googleHomePage():
     print(username[0])
     print(password[0])
     print(signInText[0])
+
+
+def test_skillsmatch_login_response():
+    url = "https://skillsmatch.mdx.ac.uk/accounts/login/"
+
+    response = requests.request("GET", url)
+
+    assert_that(response.status_code).is_equal_to(200)
+
+    response_time = response.elapsed.total_seconds()  ##Response Time
+    print(response_time)
+
+    assert_that(response_time).is_less_than(1) ## response time less than 1 seconds
