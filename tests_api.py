@@ -2,7 +2,7 @@ import requests
 import json
 import jsonpath
 from assertpy.assertpy import assert_that
-
+from lxml import html
 
 def test_Add_new_Data():
     url = "https://skillsmatch.mdx.ac.uk/api/keyword/"
@@ -67,3 +67,26 @@ def test_create_new_log():
     response = requests.request("GET", url)
 
     assert_that(response.status_code).is_equal_to(404)
+
+
+def test_googleHomePage():
+    url = "https://skillsmatch.mdx.ac.uk/accounts/login/"
+
+    response = requests.request("GET", url)
+
+    #print(response.text)
+
+    assert_that(response.status_code).is_equal_to(200)
+
+    tree = html.fromstring(response.text)
+    username = tree.xpath('//input[@name="username"]')
+    password = tree.xpath('//input[@name="password"]')
+    signInText = tree.xpath("//div[@class='container col-sm-3']/h2[contains(text(),'Sign in')]")
+ 
+    assert_that(len(username)).is_equal_to(1)
+    assert_that(len(password)).is_equal_to(1)
+    assert_that(len(signInText)).is_equal_to(1)
+
+    print(username[0])
+    print(password[0])
+    print(signInText[0])
